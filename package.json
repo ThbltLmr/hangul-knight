@@ -1,0 +1,18 @@
+{
+  "name": "hangul-knight",
+  "version": "0.1.0",
+  "description": "A 2D platformer game for learning Korean Hangul",
+  "type": "module",
+  "scripts": {
+    "dev": "bun build src/main.ts --outdir . --watch",
+    "build": "bun build src/main.ts --outdir dist --minify && cp index.html dist/",
+    "preview": "cd dist && python3 -m http.server 8080"
+  },
+  "dependencies": {
+    "phaser": "^3.80.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.3.3"
+  }
+}
