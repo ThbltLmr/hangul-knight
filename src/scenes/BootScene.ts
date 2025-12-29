@@ -56,7 +56,9 @@ export class BootScene extends Phaser.Scene {
     knight.setScale(3); // Scale up the pixel art for better visibility
     knight.play("knight-walk");
 
-    // Placeholder: transition to main game scene when ready
-    console.log("BootScene loaded - game ready!");
+    // Transition to game scene after a short delay
+    this.time.delayedCall(1500, () => {
+      this.scene.start("GameScene");
+    });
   }
 }
