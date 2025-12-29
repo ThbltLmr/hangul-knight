@@ -6,7 +6,6 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Display loading text
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
@@ -31,7 +30,6 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    // Placeholder: transition to main game scene when ready
     console.log("BootScene loaded - game ready!");
   }
 }
