@@ -26,9 +26,18 @@ Scenes are in `src/scenes/`. Each scene extends `Phaser.Scene`.
 - **Hangul recognition:** Template-based validation (trace shadowed patterns)
 
 ## Gameplay and display
+
+### Display
 - The display is divided horizontally in two: the scene with the player and enemy sprites in the top half, the drawing zone with the Hangul patterns at the bottom.
 - There are no player movements outside of the drawing.
+
+### Gameplay
 - The scene does not change or move, and neither does the player sprite. The player sprite is on the left side of the screen, and enemies come into the scene from the right side. Once an enemy is defeated, the next enemy comes into the scene.
+- The player sprite is a knight holding a sword
+- Enemies are creatures such as dragons, orcs, wolves...
+
+### Art style
+- **2D, pixelated art style**, inspired from Pokemon
 
 ## Code Conventions
 
