@@ -66,7 +66,7 @@ export class KnightSpriteGenerator {
     y: number,
     slashing: boolean
   ): void {
-    graphics.fillStyle(0x8b4513);
+    graphics.fillStyle(0xa0a0a0);
     graphics.fillRect(x - 4, y - 2, 8, 10);
 
     graphics.fillStyle(0xc0c0c0);
@@ -75,22 +75,25 @@ export class KnightSpriteGenerator {
     graphics.fillStyle(0xffd700);
     graphics.fillRect(x - 5, y - 12, 10, 4);
 
-    graphics.fillStyle(0xffe0bd);
+    graphics.fillStyle(0x505050);
     graphics.fillRect(x - 3, y - 16, 6, 4);
 
+    graphics.fillStyle(0x303030);
+    graphics.fillRect(x - 2, y - 15, 4, 2);
+
     if (slashing) {
-      graphics.fillStyle(0x8b4513);
+      graphics.fillStyle(0x909090);
       graphics.fillRect(x + 6, y - 6, 4, 8);
     } else {
-      graphics.fillStyle(0x8b4513);
+      graphics.fillStyle(0x909090);
       graphics.fillRect(x + 4, y - 2, 4, 6);
     }
 
-    graphics.fillStyle(0x4a3728);
+    graphics.fillStyle(0x808080);
     graphics.fillRect(x - 3, y + 8, 3, 6);
     graphics.fillRect(x + 1, y + 8, 3, 6);
 
-    graphics.fillStyle(0x654321);
+    graphics.fillStyle(0x606060);
     graphics.fillRect(x - 2, y + 14, 2, 3);
     graphics.fillRect(x + 1, y + 14, 2, 3);
   }
