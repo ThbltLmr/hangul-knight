@@ -30,7 +30,7 @@ Scenes are in `src/scenes/`. Each scene extends `Phaser.Scene`.
 - Use TypeScript strict mode
 - Phaser scenes use PascalCase (e.g., `GameScene.ts`)
 - Game entities in `src/entities/`
-- Systems/utilities in `src/systems/`
+- Systems/utilities in `src/systems/` and `src/utils/`
 - Static data (vocabulary) in `src/data/`
 
 ## File Locations
