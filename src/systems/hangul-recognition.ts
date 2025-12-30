@@ -47,18 +47,19 @@ export function strokesToBitmap(strokes: Point[][]): Bitmap {
     .map(() => Array(GRID_SIZE).fill(false));
 
   const bounds = calculateBounds(strokes);
-  const scale = calculateScale(bounds);
 
-  const drawingWidth = (bounds.maxX - bounds.minX) * scale;
-  const drawingHeight = (bounds.maxY - bounds.minY) * scale;
+  const TEMPLATE_SIZE = 16;
+  const TEMPLATE_OFFSET = 8;
 
-  const offsetX = Math.floor((GRID_SIZE - drawingWidth) / 2);
-  const offsetY = Math.floor((GRID_SIZE - drawingHeight) / 2);
+  const width = bounds.maxX - bounds.minX;
+  const height = bounds.maxY - bounds.minY;
+  const maxDimension = Math.max(width, height);
+  const scale = maxDimension > 0 ? (TEMPLATE_SIZE - 1) / maxDimension : 1;
 
   for (const stroke of strokes) {
     for (const point of stroke) {
-      const normalizedX = Math.floor((point.x - bounds.minX) * scale) + offsetX;
-      const normalizedY = Math.floor((point.y - bounds.minY) * scale) + offsetY;
+      const normalizedX = Math.floor((point.x - bounds.minX) * scale) + TEMPLATE_OFFSET;
+      const normalizedY = Math.floor((point.y - bounds.minY) * scale) + TEMPLATE_OFFSET;
 
       if (
         normalizedX >= 0 &&
