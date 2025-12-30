@@ -13,7 +13,7 @@ interface BoundingBox {
 export type Bitmap = boolean[][];
 
 const GRID_SIZE = 32;
-const RECOGNITION_THRESHOLD = 0.6;
+const RECOGNITION_THRESHOLD = 0.3;
 
 export function calculateBounds(strokes: Point[][]): BoundingBox {
   let minX = Infinity;
@@ -75,13 +75,42 @@ export function strokesToBitmap(strokes: Point[][]): Bitmap {
   return bitmap;
 }
 
+function dilateBitmap(bitmap: Bitmap, radius: number = 1): Bitmap {
+  const dilated = createEmptyTemplate();
+
+  for (let y = 0; y < GRID_SIZE; y++) {
+    const bitmapRow = bitmap[y];
+    if (!bitmapRow) continue;
+
+    for (let x = 0; x < GRID_SIZE; x++) {
+      if (bitmapRow[x]) {
+        for (let dy = -radius; dy <= radius; dy++) {
+          for (let dx = -radius; dx <= radius; dx++) {
+            const ny = y + dy;
+            const nx = x + dx;
+            if (ny >= 0 && ny < GRID_SIZE && nx >= 0 && nx < GRID_SIZE) {
+              const row = dilated[ny];
+              if (row) row[nx] = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return dilated;
+}
+
 export function calculateSimilarity(bitmap: Bitmap, template: Bitmap): number {
+  const dilatedBitmap = dilateBitmap(bitmap, 2);
+  const dilatedTemplate = dilateBitmap(template, 2);
+
   let matches = 0;
   let total = 0;
 
   for (let y = 0; y < GRID_SIZE; y++) {
-    const bitmapRow = bitmap[y];
-    const templateRow = template[y];
+    const bitmapRow = dilatedBitmap[y];
+    const templateRow = dilatedTemplate[y];
     if (!bitmapRow || !templateRow) continue;
 
     for (let x = 0; x < GRID_SIZE; x++) {
@@ -245,14 +274,15 @@ export function getTemplate(character: string): Bitmap | null {
 
 export function validateDrawing(
   strokes: Point[][],
-  targetCharacter: string
+  targetCharacter: string,
+  debug: boolean = false
 ): boolean {
   if (strokes.length === 0) {
     return false;
   }
 
   const totalPoints = strokes.reduce((sum, stroke) => sum + stroke.length, 0);
-  if (totalPoints < 10) {
+  if (totalPoints < 5) {
     return false;
   }
 
@@ -260,9 +290,14 @@ export function validateDrawing(
   const template = getTemplate(targetCharacter);
 
   if (!template) {
-    return totalPoints > 20;
+    return totalPoints > 15;
   }
 
   const similarity = calculateSimilarity(bitmap, template);
+
+  if (debug) {
+    console.log(`Character: ${targetCharacter}, Similarity: ${similarity.toFixed(3)}, Threshold: ${RECOGNITION_THRESHOLD}`);
+  }
+
   return similarity >= RECOGNITION_THRESHOLD;
 }
