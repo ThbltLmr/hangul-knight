@@ -55,7 +55,10 @@ export class HangulRecognitionSystem {
           normalizedY >= 0 &&
           normalizedY < this.gridSize
         ) {
-          bitmap[normalizedY][normalizedX] = true;
+          const row = bitmap[normalizedY];
+          if (row) {
+            row[normalizedX] = true;
+          }
         }
       }
     }
@@ -97,10 +100,14 @@ export class HangulRecognitionSystem {
     let total = 0;
 
     for (let y = 0; y < this.gridSize; y++) {
+      const bitmapRow = bitmap[y];
+      const templateRow = template[y];
+      if (!bitmapRow || !templateRow) continue;
+
       for (let x = 0; x < this.gridSize; x++) {
-        if (bitmap[y][x] || template[y][x]) {
+        if (bitmapRow[x] || templateRow[x]) {
           total++;
-          if (bitmap[y][x] === template[y][x]) {
+          if (bitmapRow[x] === templateRow[x]) {
             matches++;
           }
         }
@@ -129,10 +136,12 @@ export class HangulRecognitionSystem {
   private createGTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let x = 0; x < 20; x++) {
-      template[8][x] = true;
+      const row = template[8];
+      if (row) row[x] = true;
     }
     for (let y = 8; y < 24; y++) {
-      template[y][20] = true;
+      const row = template[y];
+      if (row) row[20] = true;
     }
     return template;
   }
@@ -140,10 +149,12 @@ export class HangulRecognitionSystem {
   private createNTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let y = 8; y < 24; y++) {
-      template[y][8] = true;
+      const row = template[y];
+      if (row) row[8] = true;
     }
     for (let x = 8; x < 24; x++) {
-      template[24][x] = true;
+      const row = template[24];
+      if (row) row[x] = true;
     }
     return template;
   }
@@ -151,12 +162,17 @@ export class HangulRecognitionSystem {
   private createMTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let x = 8; x < 24; x++) {
-      template[8][x] = true;
-      template[24][x] = true;
+      const row8 = template[8];
+      const row24 = template[24];
+      if (row8) row8[x] = true;
+      if (row24) row24[x] = true;
     }
     for (let y = 8; y < 24; y++) {
-      template[y][8] = true;
-      template[y][24] = true;
+      const row = template[y];
+      if (row) {
+        row[8] = true;
+        row[24] = true;
+      }
     }
     return template;
   }
@@ -164,12 +180,18 @@ export class HangulRecognitionSystem {
   private createSTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let y = 8; y < 12; y++) {
-      template[y][12] = true;
-      template[y][20] = true;
+      const row = template[y];
+      if (row) {
+        row[12] = true;
+        row[20] = true;
+      }
     }
     for (let y = 20; y < 24; y++) {
-      template[y][12] = true;
-      template[y][20] = true;
+      const row = template[y];
+      if (row) {
+        row[12] = true;
+        row[20] = true;
+      }
     }
     return template;
   }
@@ -177,10 +199,12 @@ export class HangulRecognitionSystem {
   private createATemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let y = 8; y < 24; y++) {
-      template[y][12] = true;
+      const row = template[y];
+      if (row) row[12] = true;
     }
     for (let y = 12; y < 20; y++) {
-      template[y][20] = true;
+      const row = template[y];
+      if (row) row[20] = true;
     }
     return template;
   }
@@ -188,10 +212,12 @@ export class HangulRecognitionSystem {
   private createEoTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let y = 8; y < 24; y++) {
-      template[y][20] = true;
+      const row = template[y];
+      if (row) row[20] = true;
     }
     for (let y = 12; y < 20; y++) {
-      template[y][12] = true;
+      const row = template[y];
+      if (row) row[12] = true;
     }
     return template;
   }
@@ -199,10 +225,12 @@ export class HangulRecognitionSystem {
   private createOTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let x = 8; x < 24; x++) {
-      template[12][x] = true;
+      const row = template[12];
+      if (row) row[x] = true;
     }
     for (let y = 12; y < 24; y++) {
-      template[y][16] = true;
+      const row = template[y];
+      if (row) row[16] = true;
     }
     return template;
   }
@@ -210,10 +238,12 @@ export class HangulRecognitionSystem {
   private createUTemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let x = 8; x < 24; x++) {
-      template[20][x] = true;
+      const row = template[20];
+      if (row) row[x] = true;
     }
     for (let y = 8; y < 20; y++) {
-      template[y][16] = true;
+      const row = template[y];
+      if (row) row[16] = true;
     }
     return template;
   }
@@ -221,7 +251,8 @@ export class HangulRecognitionSystem {
   private createITemplate(): boolean[][] {
     const template = this.createEmptyTemplate();
     for (let y = 8; y < 24; y++) {
-      template[y][16] = true;
+      const row = template[y];
+      if (row) row[16] = true;
     }
     return template;
   }

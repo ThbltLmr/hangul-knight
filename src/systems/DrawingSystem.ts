@@ -51,6 +51,8 @@ export class DrawingSystem {
   private onPointerMove(pointer: Phaser.Input.Pointer): void {
     if (this.isDrawing && this.isInBounds(pointer.x, pointer.y)) {
       const lastPoint = this.currentStroke[this.currentStroke.length - 1];
+      if (!lastPoint) return;
+
       const newPoint = { x: pointer.x, y: pointer.y };
 
       this.currentStroke.push(newPoint);

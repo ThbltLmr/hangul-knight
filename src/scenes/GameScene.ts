@@ -110,6 +110,7 @@ export class GameScene extends Phaser.Scene {
     graphics.fillRect(0, this.gameAreaHeight, width, this.drawingZoneHeight);
 
     const currentLesson = this.lessons[this.currentLessonIndex];
+    if (!currentLesson) return;
 
     this.targetText = this.add.text(
       width / 2,
@@ -152,11 +153,11 @@ export class GameScene extends Phaser.Scene {
 
     const buttonY = this.gameAreaHeight + 550;
 
-    const clearButton = this.createButton(150, buttonY, "Clear", () => {
+    this.createButton(150, buttonY, "Clear", () => {
       this.clearDrawing();
     });
 
-    const submitButton = this.createButton(width - 150, buttonY, "Submit", () => {
+    this.createButton(width - 150, buttonY, "Submit", () => {
       this.submitDrawing();
     });
 
@@ -280,6 +281,7 @@ export class GameScene extends Phaser.Scene {
 
     const strokes = this.drawingSystem.getStrokes();
     const currentLesson = this.lessons[this.currentLessonIndex];
+    if (!currentLesson) return;
 
     const isCorrect = this.recognitionSystem.validateDrawing(
       strokes,
@@ -316,6 +318,7 @@ export class GameScene extends Phaser.Scene {
 
   private updateDrawingZone(): void {
     const currentLesson = this.lessons[this.currentLessonIndex];
+    if (!currentLesson) return;
 
     if (this.targetText) {
       this.targetText.setText(currentLesson.korean);
