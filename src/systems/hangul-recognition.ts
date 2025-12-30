@@ -51,12 +51,8 @@ export function strokesToBitmap(strokes: Point[][]): Bitmap {
 
   for (const stroke of strokes) {
     for (const point of stroke) {
-      const normalizedX = Math.floor(
-        ((point.x - bounds.minX) * scale) % GRID_SIZE
-      );
-      const normalizedY = Math.floor(
-        ((point.y - bounds.minY) * scale) % GRID_SIZE
-      );
+      const normalizedX = Math.floor((point.x - bounds.minX) * scale);
+      const normalizedY = Math.floor((point.y - bounds.minY) * scale);
 
       if (
         normalizedX >= 0 &&
