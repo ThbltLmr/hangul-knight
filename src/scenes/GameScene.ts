@@ -4,7 +4,7 @@ import { EnemySpriteGenerator } from "../utils/EnemySpriteGenerator";
 
 export class GameScene extends Phaser.Scene {
   private knight?: Phaser.GameObjects.Sprite;
-  private currentEnemy?: Phaser.GameObjects.Sprite;
+  private currentEnemy: Phaser.GameObjects.Sprite | null = null;
   private gameAreaHeight: number = 640;
   private drawingZoneHeight: number = 640;
   private isEnemyActive: boolean = false;
@@ -19,7 +19,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
     this.gameAreaHeight = height / 2;
@@ -168,7 +167,7 @@ export class GameScene extends Phaser.Scene {
 
     this.currentEnemy.once("animationcomplete", () => {
       this.currentEnemy?.destroy();
-      this.currentEnemy = undefined;
+      this.currentEnemy = null;
       this.isEnemyActive = false;
 
       this.time.delayedCall(1500, () => {
