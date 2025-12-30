@@ -54,3 +54,60 @@ export interface Hangul {
   english: string;
   jamo: Jamo[];
 }
+
+export const BASIC_JAMO_LESSONS: Hangul[] = [
+  {
+    korean: "ㄱ",
+    romanization: "g/k",
+    english: "consonant g/k",
+    jamo: [Jamo.ㄱ],
+  },
+  {
+    korean: "ㄴ",
+    romanization: "n",
+    english: "consonant n",
+    jamo: [Jamo.ㄴ],
+  },
+  {
+    korean: "ㅁ",
+    romanization: "m",
+    english: "consonant m",
+    jamo: [Jamo.ㅁ],
+  },
+  {
+    korean: "ㅅ",
+    romanization: "s",
+    english: "consonant s",
+    jamo: [Jamo.ㅅ],
+  },
+  {
+    korean: "ㅏ",
+    romanization: "a",
+    english: "vowel a",
+    jamo: [Jamo.ㅏ],
+  },
+  {
+    korean: "ㅓ",
+    romanization: "eo",
+    english: "vowel eo",
+    jamo: [Jamo.ㅓ],
+  },
+  {
+    korean: "ㅗ",
+    romanization: "o",
+    english: "vowel o",
+    jamo: [Jamo.ㅗ],
+  },
+  {
+    korean: "ㅜ",
+    romanization: "u",
+    english: "vowel u",
+    jamo: [Jamo.ㅜ],
+  },
+  {
+    korean: "ㅣ",
+    romanization: "i",
+    english: "vowel i",
+    jamo: [Jamo.ㅣ],
+  },
+];
