@@ -268,6 +268,31 @@ export function getTemplate(character: string): Bitmap | null {
   return templates[character] || null;
 }
 
+function visualizeBitmap(bitmap: Bitmap, label: string): void {
+  console.log(`\n${label}:`);
+  let hasAnyTrue = false;
+  const rows: string[] = [];
+  for (let y = 0; y < GRID_SIZE; y++) {
+    const row = bitmap[y];
+    if (!row) continue;
+    let rowStr = '';
+    for (let x = 0; x < GRID_SIZE; x++) {
+      if (row[x]) {
+        rowStr += '█';
+        hasAnyTrue = true;
+      } else {
+        rowStr += '·';
+      }
+    }
+    rows.push(rowStr);
+  }
+  if (hasAnyTrue) {
+    console.log(rows.join('\n'));
+  } else {
+    console.log('(empty bitmap)');
+  }
+}
+
 export function validateDrawing(
   strokes: Point[][],
   targetCharacter: string,
@@ -293,6 +318,8 @@ export function validateDrawing(
 
   if (debug) {
     console.log(`Character: ${targetCharacter}, Similarity: ${similarity.toFixed(3)}, Threshold: ${RECOGNITION_THRESHOLD}`);
+    visualizeBitmap(bitmap, 'User Drawing (normalized)');
+    visualizeBitmap(template, 'Template');
   }
 
   return similarity >= RECOGNITION_THRESHOLD;
