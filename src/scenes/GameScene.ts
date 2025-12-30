@@ -285,7 +285,8 @@ export class GameScene extends Phaser.Scene {
 
     const isCorrect = this.recognitionSystem.validateDrawing(
       strokes,
-      currentLesson.korean
+      currentLesson.korean,
+      true
     );
 
     if (isCorrect) {
