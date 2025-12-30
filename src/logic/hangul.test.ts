@@ -11,7 +11,7 @@ import {
   getTemplate,
   validateDrawing,
   type Point,
-} from "./hangul-recognition";
+} from "./hangul";
 
 describe("hangul-recognition", () => {
   describe("calculateBounds", () => {
@@ -196,6 +196,56 @@ describe("hangul-recognition", () => {
       const row16 = template[16];
       expect(row16?.[8]).toBe(true);
       expect(row16?.[24]).toBe(true);
+    });
+
+    it("should create all vowel templates", () => {
+      const templates = [
+        { char: "ㅏ", template: getTemplate("ㅏ") },
+        { char: "ㅓ", template: getTemplate("ㅓ") },
+        { char: "ㅗ", template: getTemplate("ㅗ") },
+        { char: "ㅜ", template: getTemplate("ㅜ") },
+        { char: "ㅣ", template: getTemplate("ㅣ") },
+      ];
+
+      for (const { template } of templates) {
+        expect(template).not.toBeNull();
+        expect(template?.length).toBe(32);
+
+        let hasContent = false;
+        if (template) {
+          for (const row of template) {
+            if (row) {
+              for (const cell of row) {
+                if (cell) {
+                  hasContent = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        expect(hasContent).toBe(true);
+      }
+    });
+
+    it("should create ㅅ template", () => {
+      const template = getTemplate("ㅅ");
+      expect(template).not.toBeNull();
+
+      let hasContent = false;
+      if (template) {
+        for (const row of template) {
+          if (row) {
+            for (const cell of row) {
+              if (cell) {
+                hasContent = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      expect(hasContent).toBe(true);
     });
   });
 

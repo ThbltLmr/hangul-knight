@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { KnightSpriteGenerator } from "../utils/KnightSpriteGenerator";
+import { KnightSpriteGenerator } from "../../utils/KnightSpriteGenerator";
 
 export class BootScene extends Phaser.Scene {
   private knight?: Phaser.GameObjects.Sprite;

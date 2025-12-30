@@ -1,9 +1,10 @@
 import Phaser from "phaser";
-import { KnightSpriteGenerator } from "../utils/KnightSpriteGenerator";
-import { EnemySpriteGenerator } from "../utils/EnemySpriteGenerator";
-import { DrawingSystem } from "../systems/DrawingSystem";
-import { HangulRecognitionSystem } from "../systems/HangulRecognitionSystem";
-import { BASIC_JAMO_LESSONS, Hangul } from "../data/hangul";
+import { KnightSpriteGenerator } from "../../utils/KnightSpriteGenerator";
+import { EnemySpriteGenerator } from "../../utils/EnemySpriteGenerator";
+import { DrawingController } from "../../controllers/DrawingController";
+import { PlayerController } from "../../controllers/PlayerController";
+import { calculateEnemySpawnPosition, calculateEnemyTargetPosition } from "../../logic/enemy-spawner";
+import { BASIC_JAMO_LESSONS, Hangul } from "../../data/hangul";
 
 export class GameScene extends Phaser.Scene {
   private knight?: Phaser.GameObjects.Sprite;
@@ -11,8 +12,8 @@ export class GameScene extends Phaser.Scene {
   private gameAreaHeight: number = 640;
   private drawingZoneHeight: number = 640;
   private isEnemyActive: boolean = false;
-  private drawingSystem?: DrawingSystem;
-  private recognitionSystem: HangulRecognitionSystem = new HangulRecognitionSystem();
+  private drawingController?: DrawingController;
+  private playerController: PlayerController = new PlayerController();
   private currentLessonIndex: number = 0;
   private lessons: Hangul[] = BASIC_JAMO_LESSONS;
   private targetText?: Phaser.GameObjects.Text;
@@ -143,13 +144,12 @@ export class GameScene extends Phaser.Scene {
     drawAreaGraphics.lineStyle(2, 0x555555, 1);
     drawAreaGraphics.strokeRect(40, drawAreaY, width - 80, drawAreaHeight);
 
-    this.drawingSystem = new DrawingSystem(
-      this,
-      40,
-      drawAreaY,
-      width - 80,
-      drawAreaHeight
-    );
+    this.drawingController = new DrawingController(this, {
+      x: 40,
+      y: drawAreaY,
+      width: width - 80,
+      height: drawAreaHeight,
+    });
 
     const buttonY = this.gameAreaHeight + 550;
 
@@ -224,10 +224,16 @@ export class GameScene extends Phaser.Scene {
     if (this.isEnemyActive) return;
 
     const width = this.cameras.main.width;
-    const enemyX = width + 50;
-    const enemyY = this.gameAreaHeight - 120;
+    const spawnPos = calculateEnemySpawnPosition({
+      screenWidth: width,
+      gameAreaHeight: this.gameAreaHeight,
+    });
+    const targetPos = calculateEnemyTargetPosition({
+      screenWidth: width,
+      gameAreaHeight: this.gameAreaHeight,
+    });
 
-    this.currentEnemy = this.add.sprite(enemyX, enemyY, "dragon-idle-0");
+    this.currentEnemy = this.add.sprite(spawnPos.x, spawnPos.y, "dragon-idle-0");
     this.currentEnemy.setScale(4);
     this.currentEnemy.setFlipX(true);
     this.currentEnemy.play("dragon-idle");
@@ -236,7 +242,7 @@ export class GameScene extends Phaser.Scene {
 
     this.tweens.add({
       targets: this.currentEnemy,
-      x: width - 200,
+      x: targetPos.x,
       duration: 2000,
       ease: "Power2",
     });
@@ -270,34 +276,23 @@ export class GameScene extends Phaser.Scene {
   }
 
   private clearDrawing(): void {
-    this.drawingSystem?.clear();
+    this.drawingController?.clear();
     if (this.feedbackText) {
       this.feedbackText.setText("");
     }
   }
 
   private submitDrawing(): void {
-    if (!this.drawingSystem) return;
+    if (!this.drawingController) return;
 
-    const strokes = this.drawingSystem.getStrokes();
     const currentLesson = this.lessons[this.currentLessonIndex];
     if (!currentLesson) return;
 
-    console.log("=== SUBMIT DEBUG ===");
-    console.log("Number of strokes:", strokes.length);
-    console.log("Total points:", strokes.reduce((sum, stroke) => sum + stroke.length, 0));
-    console.log("Target character:", currentLesson.korean);
-    if (strokes.length > 0) {
-      console.log("First stroke sample:", strokes[0]?.slice(0, 3));
-    }
-
-    const isCorrect = this.recognitionSystem.validateDrawing(
-      strokes,
-      currentLesson.korean,
-      true
-    );
+    const isCorrect = this.drawingController.validateDrawing(currentLesson.korean, false);
 
     if (isCorrect) {
+      this.playerController.recordCorrectAnswer();
+
       if (this.feedbackText) {
         this.feedbackText.setText("Correct!");
         this.feedbackText.setColor("#00ff00");
@@ -308,6 +303,8 @@ export class GameScene extends Phaser.Scene {
         this.clearDrawing();
       });
     } else {
+      this.playerController.recordIncorrectAnswer();
+
       if (this.feedbackText) {
         this.feedbackText.setText("Try again!");
         this.feedbackText.setColor("#ff0000");

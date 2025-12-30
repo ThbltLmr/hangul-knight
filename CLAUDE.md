@@ -10,20 +10,44 @@ A mobile-first 2D platformer for learning Korean Hangul. Built with Phaser 3, Ty
 - `bun run dev` - Build with watch mode for development
 - `bun run build` - Production build to `dist/`
 - `bun run preview` - Preview production build
+- `bun run test` - Run all tests
+- `bun run test:coverage` - Run tests with coverage report
 
 ## Architecture
+
+### Separation of Concerns
+
+The codebase is structured for testability with clear separation:
+
+1. **Pure Logic** (`src/logic/`):
+   - Only pure functions, no side effects
+   - No Phaser dependencies
+   - 100% test coverage required
+   - Examples: hangul recognition, scoring, enemy spawning logic
+
+2. **Controllers** (`src/controllers/`):
+   - Bridge between pure logic and Phaser
+   - Minimal logic, mostly coordination
+   - Calls pure functions from `logic/`
+
+3. **Game/Scenes** (`src/game/`):
+   - Thin Phaser wrappers
+   - Delegates to controllers
+   - Handles only Phaser-specific rendering and lifecycle
+
+4. **Data** (`src/data/`):
+   - Static data and type definitions
+   - No logic, just data structures
 
 ### Game Configuration
 - Resolution: 720x1280 (portrait, mobile-first)
 - Scale mode: FIT with center alignment
 - Physics: Arcade with gravity
 
-### Scene Structure
-Scenes are in `src/scenes/`. Each scene extends `Phaser.Scene`.
-
 ### Key Design Decisions
 - **Touch input:** Dedicated drawing zone at bottom of screen
 - **Hangul recognition:** Template-based validation (trace shadowed patterns)
+- **Testability:** Pure functions in `logic/` folder with 100% coverage
 
 ## Gameplay and display
 
@@ -43,16 +67,27 @@ Scenes are in `src/scenes/`. Each scene extends `Phaser.Scene`.
 
 - Use TypeScript strict mode
 - Minimal comments: comments should be used exceptionnally, only to explain why a piece of code was necessary.
+- Pure functions in `src/logic/` must have corresponding `.test.ts` files
+- All logic files must have 100% test coverage
 - Phaser scenes use PascalCase (e.g., `GameScene.ts`)
-- Game entities in `src/entities/`
-- Systems/utilities in `src/systems/`
-- Static data (vocabulary) in `src/data/`
+- Controllers coordinate between logic and Phaser
+
+## Testing
+
+- **Test runner:** Bun's built-in test runner
+- **Coverage requirement:** 100% for all files in `src/logic/`
+- **CI enforcement:** Tests run on all PRs, coverage checked automatically
+- Write tests alongside logic: `foo.ts` → `foo.test.ts`
 
 ## File Locations
 
 | Purpose | Location |
 |---------|----------|
 | Entry point | `src/main.ts` |
-| Scenes | `src/scenes/` |
+| Pure logic | `src/logic/` |
+| Controllers | `src/controllers/` |
+| Phaser scenes | `src/game/scenes/` |
+| Game config | `src/game/config.ts` |
+| Static data | `src/data/` |
 | Static assets | `public/` |
 | Build output | `dist/` |
