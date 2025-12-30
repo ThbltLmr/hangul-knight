@@ -8,7 +8,8 @@
     "build": "bun build src/main.ts --outdir dist --minify && cp index.html dist/",
     "preview": "cd dist && python3 -m http.server 8080",
     "type-check": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
   },
   "dependencies": {
     "phaser": "^3.80.1"
