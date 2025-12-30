@@ -283,6 +283,14 @@ export class GameScene extends Phaser.Scene {
     const currentLesson = this.lessons[this.currentLessonIndex];
     if (!currentLesson) return;
 
+    console.log("=== SUBMIT DEBUG ===");
+    console.log("Number of strokes:", strokes.length);
+    console.log("Total points:", strokes.reduce((sum, stroke) => sum + stroke.length, 0));
+    console.log("Target character:", currentLesson.korean);
+    if (strokes.length > 0) {
+      console.log("First stroke sample:", strokes[0]?.slice(0, 3));
+    }
+
     const isCorrect = this.recognitionSystem.validateDrawing(
       strokes,
       currentLesson.korean,

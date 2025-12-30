@@ -42,6 +42,9 @@ export class DrawingSystem {
     if (this.isInBounds(pointer.x, pointer.y)) {
       this.isDrawing = true;
       this.currentStroke = [{ x: pointer.x, y: pointer.y }];
+      console.log("Drawing started at:", pointer.x, pointer.y);
+    } else {
+      console.log("Pointer down OUTSIDE bounds:", pointer.x, pointer.y, "Bounds:", this.bounds);
     }
   }
 
@@ -61,6 +64,7 @@ export class DrawingSystem {
   private onPointerUp(): void {
     if (this.isDrawing && this.currentStroke.length > 0) {
       this.allStrokes.push([...this.currentStroke]);
+      console.log("Stroke completed with", this.currentStroke.length, "points. Total strokes:", this.allStrokes.length);
       this.currentStroke = [];
       this.isDrawing = false;
     }
