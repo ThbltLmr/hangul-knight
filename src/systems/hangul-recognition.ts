@@ -49,10 +49,16 @@ export function strokesToBitmap(strokes: Point[][]): Bitmap {
   const bounds = calculateBounds(strokes);
   const scale = calculateScale(bounds);
 
+  const drawingWidth = (bounds.maxX - bounds.minX) * scale;
+  const drawingHeight = (bounds.maxY - bounds.minY) * scale;
+
+  const offsetX = Math.floor((GRID_SIZE - drawingWidth) / 2);
+  const offsetY = Math.floor((GRID_SIZE - drawingHeight) / 2);
+
   for (const stroke of strokes) {
     for (const point of stroke) {
-      const normalizedX = Math.floor((point.x - bounds.minX) * scale);
-      const normalizedY = Math.floor((point.y - bounds.minY) * scale);
+      const normalizedX = Math.floor((point.x - bounds.minX) * scale) + offsetX;
+      const normalizedY = Math.floor((point.y - bounds.minY) * scale) + offsetY;
 
       if (
         normalizedX >= 0 &&
@@ -268,6 +274,31 @@ export function getTemplate(character: string): Bitmap | null {
   return templates[character] || null;
 }
 
+function visualizeBitmap(bitmap: Bitmap, label: string): void {
+  console.log(`\n${label}:`);
+  let hasAnyTrue = false;
+  const rows: string[] = [];
+  for (let y = 0; y < GRID_SIZE; y++) {
+    const row = bitmap[y];
+    if (!row) continue;
+    let rowStr = '';
+    for (let x = 0; x < GRID_SIZE; x++) {
+      if (row[x]) {
+        rowStr += '█';
+        hasAnyTrue = true;
+      } else {
+        rowStr += '·';
+      }
+    }
+    rows.push(rowStr);
+  }
+  if (hasAnyTrue) {
+    console.log(rows.join('\n'));
+  } else {
+    console.log('(empty bitmap)');
+  }
+}
+
 export function validateDrawing(
   strokes: Point[][],
   targetCharacter: string,
@@ -293,6 +324,8 @@ export function validateDrawing(
 
   if (debug) {
     console.log(`Character: ${targetCharacter}, Similarity: ${similarity.toFixed(3)}, Threshold: ${RECOGNITION_THRESHOLD}`);
+    visualizeBitmap(bitmap, 'User Drawing (normalized)');
+    visualizeBitmap(template, 'Template');
   }
 
   return similarity >= RECOGNITION_THRESHOLD;
