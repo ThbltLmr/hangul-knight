@@ -1,7 +1,4 @@
-export interface Point {
-  x: number;
-  y: number;
-}
+import { type Point } from "./hangul-recognition";
 
 export class DrawingSystem {
   private scene: Phaser.Scene;
