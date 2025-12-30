@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 import { KnightSpriteGenerator } from "../utils/KnightSpriteGenerator";
 import { EnemySpriteGenerator } from "../utils/EnemySpriteGenerator";
+import { DrawingSystem } from "../systems/DrawingSystem";
+import { HangulRecognitionSystem } from "../systems/HangulRecognitionSystem";
+import { BASIC_JAMO_LESSONS, Hangul } from "../data/hangul";
 
 export class GameScene extends Phaser.Scene {
   private knight?: Phaser.GameObjects.Sprite;
@@ -8,6 +11,13 @@ export class GameScene extends Phaser.Scene {
   private gameAreaHeight: number = 640;
   private drawingZoneHeight: number = 640;
   private isEnemyActive: boolean = false;
+  private drawingSystem?: DrawingSystem;
+  private recognitionSystem: HangulRecognitionSystem = new HangulRecognitionSystem();
+  private currentLessonIndex: number = 0;
+  private lessons: Hangul[] = BASIC_JAMO_LESSONS;
+  private targetText?: Phaser.GameObjects.Text;
+  private instructionText?: Phaser.GameObjects.Text;
+  private feedbackText?: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: "GameScene" });
@@ -99,18 +109,105 @@ export class GameScene extends Phaser.Scene {
     graphics.fillStyle(0x2a2a2a, 1);
     graphics.fillRect(0, this.gameAreaHeight, width, this.drawingZoneHeight);
 
-    const text = this.add.text(
+    const currentLesson = this.lessons[this.currentLessonIndex];
+
+    this.targetText = this.add.text(
       width / 2,
-      this.gameAreaHeight + this.drawingZoneHeight / 2,
-      "Drawing Zone\n(Coming Soon)",
+      this.gameAreaHeight + 60,
+      currentLesson.korean,
       {
-        fontSize: "24px",
+        fontSize: "120px",
         color: "#666666",
         fontFamily: "Arial, sans-serif",
-        align: "center",
       }
     );
-    text.setOrigin(0.5, 0.5);
+    this.targetText.setOrigin(0.5, 0.5);
+
+    this.instructionText = this.add.text(
+      width / 2,
+      this.gameAreaHeight + 160,
+      `${currentLesson.romanization} - ${currentLesson.english}`,
+      {
+        fontSize: "18px",
+        color: "#aaaaaa",
+        fontFamily: "Arial, sans-serif",
+      }
+    );
+    this.instructionText.setOrigin(0.5, 0.5);
+
+    const drawAreaY = this.gameAreaHeight + 220;
+    const drawAreaHeight = 280;
+
+    const drawAreaGraphics = this.add.graphics();
+    drawAreaGraphics.lineStyle(2, 0x555555, 1);
+    drawAreaGraphics.strokeRect(40, drawAreaY, width - 80, drawAreaHeight);
+
+    this.drawingSystem = new DrawingSystem(
+      this,
+      40,
+      drawAreaY,
+      width - 80,
+      drawAreaHeight
+    );
+
+    const buttonY = this.gameAreaHeight + 550;
+
+    const clearButton = this.createButton(150, buttonY, "Clear", () => {
+      this.clearDrawing();
+    });
+
+    const submitButton = this.createButton(width - 150, buttonY, "Submit", () => {
+      this.submitDrawing();
+    });
+
+    this.feedbackText = this.add.text(width / 2, this.gameAreaHeight + 600, "", {
+      fontSize: "20px",
+      color: "#ffff00",
+      fontFamily: "Arial, sans-serif",
+      align: "center",
+    });
+    this.feedbackText.setOrigin(0.5, 0.5);
+  }
+
+  private createButton(
+    x: number,
+    y: number,
+    text: string,
+    callback: () => void
+  ): Phaser.GameObjects.Container {
+    const buttonWidth = 120;
+    const buttonHeight = 50;
+
+    const bg = this.add.graphics();
+    bg.fillStyle(0x4a4a4a, 1);
+    bg.fillRoundedRect(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 10);
+
+    const label = this.add.text(0, 0, text, {
+      fontSize: "20px",
+      color: "#ffffff",
+      fontFamily: "Arial, sans-serif",
+    });
+    label.setOrigin(0.5, 0.5);
+
+    const container = this.add.container(x, y, [bg, label]);
+    container.setSize(buttonWidth, buttonHeight);
+    container.setInteractive();
+
+    container.on("pointerdown", callback);
+
+    container.on("pointerover", () => {
+      bg.clear();
+      bg.fillStyle(0x6a6a6a, 1);
+      bg.fillRoundedRect(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 10);
+    });
+
+    container.on("pointerout", () => {
+      bg.clear();
+      bg.fillStyle(0x4a4a4a, 1);
+      bg.fillRoundedRect(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 10);
+    });
+
+    return container;
   }
 
   private createKnight(): void {
@@ -141,11 +238,6 @@ export class GameScene extends Phaser.Scene {
       x: width - 200,
       duration: 2000,
       ease: "Power2",
-      onComplete: () => {
-        this.time.delayedCall(1000, () => {
-          this.attackEnemy();
-        });
-      },
     });
   }
 
@@ -171,8 +263,70 @@ export class GameScene extends Phaser.Scene {
       this.isEnemyActive = false;
 
       this.time.delayedCall(1500, () => {
-        this.spawnEnemy();
+        this.nextLesson();
       });
     });
+  }
+
+  private clearDrawing(): void {
+    this.drawingSystem?.clear();
+    if (this.feedbackText) {
+      this.feedbackText.setText("");
+    }
+  }
+
+  private submitDrawing(): void {
+    if (!this.drawingSystem) return;
+
+    const strokes = this.drawingSystem.getStrokes();
+    const currentLesson = this.lessons[this.currentLessonIndex];
+
+    const isCorrect = this.recognitionSystem.validateDrawing(
+      strokes,
+      currentLesson.korean
+    );
+
+    if (isCorrect) {
+      if (this.feedbackText) {
+        this.feedbackText.setText("Correct!");
+        this.feedbackText.setColor("#00ff00");
+      }
+
+      this.time.delayedCall(500, () => {
+        this.attackEnemy();
+        this.clearDrawing();
+      });
+    } else {
+      if (this.feedbackText) {
+        this.feedbackText.setText("Try again!");
+        this.feedbackText.setColor("#ff0000");
+      }
+
+      this.time.delayedCall(1000, () => {
+        this.clearDrawing();
+      });
+    }
+  }
+
+  private nextLesson(): void {
+    this.currentLessonIndex = (this.currentLessonIndex + 1) % this.lessons.length;
+    this.updateDrawingZone();
+    this.spawnEnemy();
+  }
+
+  private updateDrawingZone(): void {
+    const currentLesson = this.lessons[this.currentLessonIndex];
+
+    if (this.targetText) {
+      this.targetText.setText(currentLesson.korean);
+    }
+
+    if (this.instructionText) {
+      this.instructionText.setText(
+        `${currentLesson.romanization} - ${currentLesson.english}`
+      );
+    }
+
+    this.clearDrawing();
   }
 }
