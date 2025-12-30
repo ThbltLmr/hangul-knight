@@ -8,16 +8,9 @@ import {
   createGTemplate,
   createNTemplate,
   createMTemplate,
-  createSTemplate,
-  createATemplate,
-  createEoTemplate,
-  createOTemplate,
-  createUTemplate,
-  createITemplate,
   getTemplate,
   validateDrawing,
   type Point,
-  type Bitmap,
 } from "./hangul-recognition";
 
 describe("hangul-recognition", () => {
