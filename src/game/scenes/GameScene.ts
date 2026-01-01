@@ -172,7 +172,7 @@ export class GameScene extends Phaser.Scene {
     const knightY = this.gameAreaHeight - 120;
 
     this.knight = this.add.sprite(knightX, knightY, "knight-idle");
-    this.knight.setScale(0.5);
+    this.knight.setScale(1.0);
     this.knight.play("knight-idle");
   }
 
@@ -190,7 +190,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.currentEnemy = this.add.sprite(spawnPos.x, spawnPos.y, "dragon-idle");
-    this.currentEnemy.setScale(0.5);
+    this.currentEnemy.setScale(1.5);
     this.currentEnemy.setFlipX(true);
     this.currentEnemy.play("dragon-idle");
 
