@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun build src/main.ts --outdir . --watch",
-    "build": "bun build src/main.ts --outdir dist --minify && cp index.html dist/",
+    "build": "bun build src/main.ts --outdir dist --minify && cp index.html dist/ && cp -r public/* dist/",
     "preview": "cd dist && python3 -m http.server 8080",
     "type-check": "tsc --noEmit",
     "test": "bun test",
