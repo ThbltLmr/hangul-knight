@@ -31,16 +31,18 @@ export class BootScene extends Phaser.Scene {
     );
     subtitleText.setOrigin(0.5, 0.5);
 
-    KnightSpriteGenerator.generateKnightSprites(this);
+    KnightSpriteGenerator.loadKnightSprites(this);
   }
 
   create(): void {
     console.log("BootScene loaded - game ready!");
 
+    KnightSpriteGenerator.createAnimations(this);
+
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    this.knight = this.add.sprite(width / 2, height / 2 - 100, "knight-idle-0");
+    this.knight = this.add.sprite(width / 2, height / 2 - 100, "knight-idle");
     this.knight.setScale(3);
     this.knight.play("knight-idle");
 
