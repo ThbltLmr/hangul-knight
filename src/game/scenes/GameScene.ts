@@ -218,7 +218,7 @@ export class GameScene extends Phaser.Scene {
     const knightY = this.gameAreaHeight - 120;
 
     this.knight = this.add.sprite(knightX, knightY, "knight-idle");
-    this.knight.setScale(4);
+    this.knight.setScale(0.5);
     this.knight.play("knight-idle");
   }
 
