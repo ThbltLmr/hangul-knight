@@ -93,9 +93,12 @@ hangul-knight/
 │   └── data/                      # Static data
 │       └── hangul.ts              # Korean vocabulary
 ├── public/                        # Static assets
-│   └── sprites/                   # Game sprites
+│   ├── backgrounds/               # Background images
+│   │   └── bamboo-forest.png      # Game scene background
+│   └── sprites/                   # Character sprites
 │       ├── knight-idle.png        # Knight idle animation (4 frames)
-│       └── knight-slash.png       # Knight slash animation (6 frames)
+│       ├── knight-slash.png       # Knight slash animation (6 frames)
+│       └── dragon-idle.png        # Dragon idle animation (4 frames)
 ├── dist/                          # Production build output
 ├── index.html                     # Entry HTML file
 └── package.json
