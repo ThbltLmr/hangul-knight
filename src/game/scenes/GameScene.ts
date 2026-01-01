@@ -25,11 +25,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    KnightSpriteGenerator.generateKnightSprites(this);
+    KnightSpriteGenerator.loadKnightSprites(this);
     EnemySpriteGenerator.generateDragonSprites(this);
   }
 
   create(): void {
+    KnightSpriteGenerator.createAnimations(this);
+
     const height = this.cameras.main.height;
 
     this.gameAreaHeight = height / 2;
@@ -215,7 +217,7 @@ export class GameScene extends Phaser.Scene {
     const knightX = 150;
     const knightY = this.gameAreaHeight - 120;
 
-    this.knight = this.add.sprite(knightX, knightY, "knight-idle-0");
+    this.knight = this.add.sprite(knightX, knightY, "knight-idle");
     this.knight.setScale(4);
     this.knight.play("knight-idle");
   }

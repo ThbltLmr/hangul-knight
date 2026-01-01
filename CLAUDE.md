@@ -89,5 +89,11 @@ The codebase is structured for testability with clear separation:
 | Phaser scenes | `src/game/scenes/` |
 | Game config | `src/game/config.ts` |
 | Static data | `src/data/` |
-| Static assets | `public/` |
+| Sprite assets | `public/sprites/` |
 | Build output | `dist/` |
+
+### Asset Naming Convention
+
+Sprite assets follow the `{entity}-{action}.png` pattern:
+- `knight-idle.png` - Knight idle animation (4 frames, 169x369px each)
+- `knight-slash.png` - Knight slash animation (6 frames, 225x184px each)
