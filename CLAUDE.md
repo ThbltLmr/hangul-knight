@@ -90,6 +90,7 @@ The codebase is structured for testability with clear separation:
 | Game config | `src/game/config.ts` |
 | Static data | `src/data/` |
 | Sprite assets | `public/sprites/` |
+| Backgrounds | `public/backgrounds/` |
 | Build output | `dist/` |
 
 ### Asset Naming Convention
@@ -97,3 +98,4 @@ The codebase is structured for testability with clear separation:
 Sprite assets follow the `{entity}-{action}.png` pattern:
 - `knight-idle.png` - Knight idle animation (4 frames, 169x369px each)
 - `knight-slash.png` - Knight slash animation (6 frames, 225x184px each)
+- `dragon-idle.png` - Dragon idle animation (4 frames, 169x369px each)

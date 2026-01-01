@@ -26,11 +26,13 @@ export class GameScene extends Phaser.Scene {
 
   preload(): void {
     KnightSpriteGenerator.loadKnightSprites(this);
-    EnemySpriteGenerator.generateDragonSprites(this);
+    EnemySpriteGenerator.loadDragonSprites(this);
+    this.load.image("background", "backgrounds/bamboo-forest.png");
   }
 
   create(): void {
     KnightSpriteGenerator.createAnimations(this);
+    EnemySpriteGenerator.createAnimations(this);
 
     const height = this.cameras.main.height;
 
@@ -47,56 +49,8 @@ export class GameScene extends Phaser.Scene {
 
   private createBackground(): void {
     const width = this.cameras.main.width;
-
-    const bgKey = "forest-background";
-    const canvas = this.textures.createCanvas(bgKey, width, this.gameAreaHeight);
-    if (!canvas) return;
-
-    const ctx = canvas.context;
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, this.gameAreaHeight);
-    gradient.addColorStop(0, "#0a0e1a");
-    gradient.addColorStop(1, "#1a2332");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, this.gameAreaHeight);
-
-    ctx.fillStyle = "#0d1821";
-    for (let i = 0; i < 8; i++) {
-      const x = (i * width) / 8 + (width / 16);
-      const treeHeight = 200 + Math.random() * 100;
-      const treeWidth = 40 + Math.random() * 20;
-
-      ctx.fillRect(x - treeWidth / 2, this.gameAreaHeight - treeHeight, treeWidth, treeHeight);
-
-      ctx.beginPath();
-      ctx.moveTo(x, this.gameAreaHeight - treeHeight - 80);
-      ctx.lineTo(x - treeWidth, this.gameAreaHeight - treeHeight);
-      ctx.lineTo(x + treeWidth, this.gameAreaHeight - treeHeight);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(x, this.gameAreaHeight - treeHeight - 40);
-      ctx.lineTo(x - treeWidth * 0.8, this.gameAreaHeight - treeHeight - 20);
-      ctx.lineTo(x + treeWidth * 0.8, this.gameAreaHeight - treeHeight - 20);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    ctx.fillStyle = "#162028";
-    ctx.fillRect(0, this.gameAreaHeight - 60, width, 60);
-
-    for (let i = 0; i < 30; i++) {
-      const x = Math.random() * width;
-      const y = Math.random() * (this.gameAreaHeight - 60);
-      const size = Math.random() * 2 + 1;
-      ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})`;
-      ctx.fillRect(x, y, size, size);
-    }
-
-    canvas.refresh();
-
-    this.add.image(width / 2, this.gameAreaHeight / 2, bgKey);
+    const bg = this.add.image(width / 2, this.gameAreaHeight / 2, "background");
+    bg.setDisplaySize(width, this.gameAreaHeight);
   }
 
   private createDivider(): void {
@@ -235,8 +189,8 @@ export class GameScene extends Phaser.Scene {
       gameAreaHeight: this.gameAreaHeight,
     });
 
-    this.currentEnemy = this.add.sprite(spawnPos.x, spawnPos.y, "dragon-idle-0");
-    this.currentEnemy.setScale(4);
+    this.currentEnemy = this.add.sprite(spawnPos.x, spawnPos.y, "dragon-idle");
+    this.currentEnemy.setScale(0.5);
     this.currentEnemy.setFlipX(true);
     this.currentEnemy.play("dragon-idle");
 
@@ -264,16 +218,21 @@ export class GameScene extends Phaser.Scene {
   private defeatEnemy(): void {
     if (!this.currentEnemy) return;
 
-    this.currentEnemy.play("dragon-death");
+    this.tweens.add({
+      targets: this.currentEnemy,
+      alpha: 0,
+      y: this.currentEnemy.y + 50,
+      duration: 600,
+      ease: "Power2",
+      onComplete: () => {
+        this.currentEnemy?.destroy();
+        this.currentEnemy = null;
+        this.isEnemyActive = false;
 
-    this.currentEnemy.once("animationcomplete", () => {
-      this.currentEnemy?.destroy();
-      this.currentEnemy = null;
-      this.isEnemyActive = false;
-
-      this.time.delayedCall(1500, () => {
-        this.nextLesson();
-      });
+        this.time.delayedCall(1500, () => {
+          this.nextLesson();
+        });
+      },
     });
   }
 
