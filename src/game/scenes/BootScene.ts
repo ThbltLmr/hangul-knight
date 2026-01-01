@@ -43,7 +43,7 @@ export class BootScene extends Phaser.Scene {
     const height = this.cameras.main.height;
 
     this.knight = this.add.sprite(width / 2, height / 2 - 100, "knight-idle");
-    this.knight.setScale(3);
+    this.knight.setScale(0.5);
     this.knight.play("knight-idle");
 
     this.time.addEvent({
