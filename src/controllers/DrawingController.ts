@@ -55,8 +55,8 @@ export class DrawingController {
     }
   }
 
-  public validateDrawing(targetCharacter: string, debug: boolean = false): boolean {
-    return validateDrawing(this.allStrokes, targetCharacter, debug);
+  public validateDrawing(targetCharacter: string): boolean {
+    return validateDrawing(this.allStrokes, targetCharacter);
   }
 
   public clear(): void {
